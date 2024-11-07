@@ -4931,7 +4931,7 @@ td:last-child {
 		margin-left: -30px !important;
 	}
 	#qrMobile {
-		margin-left: -13px !important;
+		margin-left: -10px !important;
 	}
 	#customButMobileContainer {
 		margin-left: 10px !important;
@@ -4939,5 +4939,15 @@ td:last-child {
 	#donationGlow {
 		width: 70vw !important;
 		font-size: 72px !important;
+	}
+	#customAmountMobile {
+		width: 50vw;
+		margin-left: 3vw;
+	}
+}
+/* For screens smaller than 750px */
+@media screen and (max-width: 1366px) {
+	#donateDesktop {
+		margin-left: 10vw;
 	}
 }

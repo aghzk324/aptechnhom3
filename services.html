@@ -120,6 +120,26 @@
         .scale-up {
             transform: scale(1.5);
         }
+        
+
+        /* Loading spinner style */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #000;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: none; /* Initially hidden */
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
     </style>
 
 </head>
@@ -255,6 +275,7 @@
 
                                     <!-- QR Code Display -->
                                     <div class="qr-code-container">
+                                        <div class="spinner" id="loadingSpinnerDesktop"></div>
                                         <img src="https://img.vietqr.io/image/ICB-104880344294-compact.png"
                                             alt="QR Code for Donation" class="qr-code" id="qrCodeImage">
                                         <div class="qr-code-caption" id="qrCodeCaption">Scan to donate</div>
@@ -274,10 +295,11 @@
                                         <div id="customButMobileContainer" class="custom-amount-container">
                                             <input type="number" id= "customAmountMobile"
                                                 placeholder="Enter amount" min="1000" step="1000">
-                                            <button style="margin-top: -15px; margin-left: 10;" class="custom-amount-button"
-                                                onclick="handleCustomAmountMobile()">Donate Custom</button>
+                                            <button style="margin-top: -15px; margin-left: 25px;" class="custom-amount-button"
+                                                onclick="handleCustomAmountMobile()">Donate Us</button>
                                         </div>
                                         <div id="qrMobile" style="width: 200%;">
+                                            <div class="spinner" id="loadingSpinnerMobile"></div>
                                             <img src="https://img.vietqr.io/image/ICB-104880344294-compact.png"
                                                 alt="QR Code for Donation" class="qr-code" id="qrCodeImageMobile">
                                             <div class="qr-code-caption" id="qrCodeCaptionMobile"
@@ -392,20 +414,34 @@
         function updateQRCode(amount, isMobile = false) {
             const qrCodeImage = isMobile ? document.getElementById('qrCodeImageMobile') : document.getElementById('qrCodeImage');
             const qrCodeCaption = isMobile ? document.getElementById('qrCodeCaptionMobile') : document.getElementById('qrCodeCaption');
+            const loadingSpinner = isMobile ? document.getElementById('loadingSpinnerMobile') : document.getElementById('loadingSpinnerDesktop');
+
+            // Show loading spinner and hide the QR code image
+            loadingSpinner.style.display = 'block';
+            qrCodeImage.style.display = 'none';
 
             // Generate QR code URL with the desired amount
             const qrUrl = `https://img.vietqr.io/image/970415-104880344294-compact.png?amount=${amount}&addInfo=cho+em+tien+mua+mi+anh+chi+oi&accountName=GROUP%3`;
 
             const formattedAmount = Number(amount).toLocaleString();
-            qrCodeImage.src = qrUrl;
             qrCodeCaption.textContent = `Scan to donate VND ${formattedAmount}`;
 
-            // Trigger scale animation by adding and removing the 'scale-up' class
-            qrCodeImage.classList.add('scale-up');
-            setTimeout(() => {
-                qrCodeImage.classList.remove('scale-up');
-            }, 200);
+            // Set the new QR code image source and handle load event
+            qrCodeImage.onload = () => {
+                // Hide the spinner and show the QR code image when loaded
+                loadingSpinner.style.display = 'none';
+                qrCodeImage.style.display = 'block';
+
+                // Trigger scale animation
+                qrCodeImage.classList.add('scale-up');
+                setTimeout(() => {
+                    qrCodeImage.classList.remove('scale-up');
+                }, 200);
+            };
+
+            qrCodeImage.src = qrUrl; // Start loading the new image
         }
+
 
         function handleCustomAmount() {
             const customAmount = document.getElementById('customAmount').value;
